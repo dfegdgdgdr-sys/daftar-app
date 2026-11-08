@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Daftar">
+<meta name="theme-color" content="#4F6BFF">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>Daftar</title>
+<style>
+:root{
+  --brand:#4F6BFF; --brand2:#7C3AED;
+  --bg:#F2F3F9; --card:#FFFFFF; --text:#1B1F2A; --muted:#7A8194; --line:#E5E8F1;
+  --good:#12A05A; --bad:#E5484D; --warn:#F59E0B; --chip:#E8EBFE; --soft:#E9ECFB;
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0D1017;--card:#171B24;--text:#EEF0F6;--muted:#8D95A8;--line:#272C3A;--chip:#232948;--soft:#252B45}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+  font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  -webkit-text-size-adjust:100%;overscroll-behavior:none}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{touch-action:manipulation;cursor:pointer}
+#app{height:100%;height:100dvh;display:flex;flex-direction:column;max-width:640px;margin:0 auto;position:relative}
+
+/* sarlavha */
+header.top{flex:0 0 auto;display:flex;align-items:center;gap:13px;color:#fff;
+  padding:calc(var(--sat) + 14px) 20px 18px;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  border-radius:0 0 26px 26px;box-shadow:0 8px 24px rgba(79,107,255,.25);z-index:5}
+.logo{width:46px;height:46px;border-radius:13px;object-fit:cover;background:rgba(255,255,255,.2);flex:0 0 auto}
+.hd{min-width:0}
+.name{font-size:23px;font-weight:800;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{font-size:13px;opacity:.85;margin-top:1px}
+
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(104px + var(--sab))}
+
+/* pastki menyu */
+nav.tabs{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:640px;display:flex;
+  background:var(--card);border-top:1px solid var(--line);padding:6px 6px calc(6px + var(--sab));z-index:10}
+nav.tabs button{flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:7px 0;color:var(--muted);font-size:11.5px;font-weight:600;border-radius:12px}
+nav.tabs button svg{width:25px;height:25px}
+nav.tabs button.on{color:var(--brand)}
+.fab{position:fixed;right:max(18px,calc(50% - 302px));bottom:calc(84px + var(--sab));width:58px;height:58px;border-radius:50%;border:0;color:#fff;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 8px 22px rgba(79,107,255,.45);
+  display:flex;align-items:center;justify-content:center;z-index:11}
+.fab svg{width:28px;height:28px}
+.fab:active{transform:scale(.94)}
+
+/* kartalar */
+.card{background:var(--card);border-radius:18px;padding:14px;margin-bottom:11px;box-shadow:0 1px 2px rgba(20,25,50,.05)}
+.row-card{display:flex;align-items:center;gap:13px;cursor:pointer}
+.row-card:active{transform:scale(.99)}
+.grow{flex:1;min-width:0}
+.t{font-weight:700;font-size:16.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s{color:var(--muted);font-size:13px;margin-top:2px}
+.th{width:52px;height:52px;border-radius:13px;object-fit:cover;flex:0 0 auto;background:var(--soft)}
+.av{width:52px;height:52px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:21px;color:#fff}
+.av.toMe{background:linear-gradient(135deg,#22C07A,#0E9355)}
+.av.iOwe{background:linear-gradient(135deg,#FF7A7F,#DB3A41)}
+.amt{font-weight:800;font-size:16px;text-align:right;white-space:nowrap}
+.amt.good{color:var(--good)} .amt.bad{color:var(--bad)} .amt.done{color:var(--muted);font-weight:700;font-size:14px}
+.s.late{color:var(--bad);font-weight:700}
+
+.sum2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px}
+.sumc{border-radius:18px;padding:14px;color:#fff}
+.sumc span{display:block;font-size:12.5px;opacity:.9;font-weight:600}
+.sumc b{display:block;font-size:19px;margin-top:5px;word-break:break-word;letter-spacing:-.2px}
+.sumc.good{background:linear-gradient(135deg,#22C07A,#0E9355)}
+.sumc.bad{background:linear-gradient(135deg,#FF7A7F,#DB3A41)}
+.sumc.brand{background:linear-gradient(135deg,var(--brand),var(--brand2))}
+.sum3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px}
+.sum3 .sumc{padding:12px 10px}.sum3 .sumc b{font-size:16px}
+
+.search{position:relative;margin-bottom:12px}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted)}
+.search input{width:100%;padding:13px 14px 13px 42px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:16px;outline:none}
+.search input:focus{border-color:var(--brand)}
+.chips{display:flex;gap:8px;overflow-x:auto;margin-bottom:13px;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:0;background:var(--chip);color:var(--brand);font-weight:700;font-size:14px;padding:8px 15px;border-radius:20px}
+.chip.on{background:var(--brand);color:#fff}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.gcard{background:var(--card);border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(20,25,50,.05)}
+.gcard:active{transform:scale(.98)}
+.gimg{aspect-ratio:4/3;width:100%;object-fit:cover;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--brand)}
+.gimg svg{width:38px;height:38px;opacity:.7}
+.gbody{padding:10px 12px 12px}
+.gbody .t{font-size:15px}
+.qty{font-weight:800;color:var(--brand)}
+
+.note-card .tx{color:var(--muted);font-size:14px;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap}
+.note-card .pics{display:flex;gap:6px;margin-top:9px}
+.note-card .pics img{width:48px;height:48px;border-radius:10px;object-fit:cover}
+
+.empty{text-align:center;color:var(--muted);padding:44px 20px}
+.empty svg{width:60px;height:60px;color:var(--brand);opacity:.55;margin-bottom:10px}
+.empty b{display:block;color:var(--text);font-size:17px;margin-bottom:4px}
+
+.tip{background:linear-gradient(135deg,#FFF4D6,#FFE7B0);color:#5b4200;border-radius:16px;padding:13px 14px;margin-bottom:14px;font-size:14px;position:relative}
+.tip b{display:block;margin-bottom:3px}
+.tip button{position:absolute;top:6px;right:8px;border:0;background:none;font-size:20px;color:#5b4200}
+
+/* oynalar */
+.overlay{position:fixed;inset:0;background:rgba(10,14,25,.55);display:flex;align-items:flex-end;justify-content:center;z-index:50;animation:fade .18s}
+.sheet{background:var(--bg);width:100%;max-width:640px;max-height:94%;border-radius:24px 24px 0 0;display:flex;flex-direction:column;animation:up .26s cubic-bezier(.2,.8,.2,1)}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px 10px}
+.sheet-head h2{margin:0;font-size:19px;letter-spacing:-.2px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.x{border:0;background:var(--soft);color:var(--text);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.x svg{width:18px;height:18px}
+.sheet-body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 16px 18px}
+.sheet-foot{display:flex;gap:10px;padding:12px 16px calc(12px + var(--sab));border-top:1px solid var(--line);background:var(--bg)}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+
+.overlay.dlg{align-items:center;padding:24px;z-index:80}
+.dialog{background:var(--card);border-radius:22px;padding:22px 20px 18px;width:100%;max-width:360px;animation:pop .2s}
+.dialog h3{margin:0 0 6px;font-size:19px}
+.dialog p{margin:0 0 14px;color:var(--muted);font-size:14.5px}
+.dialog input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);font-size:17px;outline:none}
+.dialog input:focus{border-color:var(--brand)}
+.dialog .err{color:var(--bad);font-weight:600;font-size:13.5px;min-height:20px;margin-top:6px}
+.dialog .row{display:flex;gap:10px;margin-top:8px}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+
+.btn{flex:1;border:0;border-radius:14px;padding:14px 12px;font-size:16px;font-weight:700;background:var(--soft);color:var(--brand)}
+.btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.btn.danger{background:#FDE8E8;color:var(--bad)}
+.btn.danger.solid{background:var(--bad);color:#fff}
+.btn.small{flex:0 0 auto;padding:10px 16px;font-size:14.5px}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{opacity:.5}
+.btn.icon{flex:0 0 52px;display:flex;align-items:center;justify-content:center;padding:0}
+.btn.icon svg{width:22px;height:22px}
+
+.field{margin:13px 0}
+.field>label{display:block;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:6px}
+.field>label i{font-weight:500;font-style:normal;opacity:.85}
+.field input,.field textarea,.field select{width:100%;padding:13px 14px;border-radius:13px;border:1px solid var(--line);background:var(--card);font-size:16px;outline:none;-webkit-appearance:none;appearance:none}
+.field input[type=date]{min-height:50px}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--brand)}
+.field textarea{resize:none;line-height:1.45}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.seg{display:flex;background:var(--soft);border-radius:13px;padding:4px;gap:4px}
+.seg button{flex:1;border:0;background:none;padding:10px 6px;border-radius:10px;font-weight:700;font-size:14.5px;color:var(--muted)}
+.seg button.on{background:var(--card);color:var(--brand);box-shadow:0 1px 3px rgba(20,25,50,.12)}
+
+.thumbs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:10px}
+.thumb{position:relative;width:84px;height:84px}
+.thumb img{width:100%;height:100%;border-radius:13px;object-fit:cover}
+.thumb button{position:absolute;top:-7px;right:-7px;width:26px;height:26px;border-radius:50%;border:2px solid var(--bg);background:var(--bad);color:#fff;
+  display:flex;align-items:center;justify-content:center;padding:0}
+.thumb button svg{width:13px;height:13px}
+.btnrow{display:flex;gap:10px}
+
+.bigcard{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-radius:20px;padding:18px;margin-top:6px}
+.bigcard.toMe{background:linear-gradient(135deg,#22C07A,#0E9355)}
+.bigcard.iOwe{background:linear-gradient(135deg,#FF7A7F,#DB3A41)}
+.bigcard.closed{background:linear-gradient(135deg,#8E96AB,#6B7389)}
+.bigcard small{opacity:.9;font-weight:600}
+.bigcard .num{font-size:32px;font-weight:800;letter-spacing:-.5px;margin:3px 0 10px;word-break:break-word}
+.bar{height:8px;border-radius:8px;background:rgba(255,255,255,.3);overflow:hidden}
+.bar i{display:block;height:100%;background:#fff;border-radius:8px}
+.bigcard .meta{display:flex;justify-content:space-between;font-size:13px;margin-top:8px;opacity:.95}
+.info{background:var(--card);border-radius:16px;padding:4px 14px;margin-top:12px}
+.info div{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}
+.info div:last-child{border:0}
+.info span{color:var(--muted);flex:0 0 auto}
+.info b{font-weight:600;text-align:right;word-break:break-word}
+.info a{color:var(--brand);text-decoration:none;font-weight:700}
+h4{margin:20px 4px 8px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pgrid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:13px;cursor:pointer}
+.pay{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:14px;padding:11px 13px;margin-bottom:8px}
+.pay .d{flex:1;min-width:0}.pay .d b{display:block;font-size:15px}.pay .d span{font-size:12.5px;color:var(--muted)}
+.pay .a{font-weight:800;color:var(--good)}
+.pay button{border:0;background:#FDE8E8;color:var(--bad);width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.pay button svg{width:17px;height:17px}
+.stepper{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--card);border-radius:18px;padding:14px;margin-top:12px}
+.stepper button{width:46px;height:46px;border-radius:50%;border:0;background:var(--soft);color:var(--brand);font-size:26px;font-weight:700;line-height:1}
+.stepper .q{text-align:center;min-width:90px}.stepper .q b{font-size:30px;display:block;letter-spacing:-.5px}.stepper .q span{color:var(--muted);font-size:13px}
+.notetext{white-space:pre-wrap;word-break:break-word;background:var(--card);border-radius:16px;padding:14px;margin-top:12px;font-size:16px;line-height:1.5;-webkit-user-select:text;user-select:text}
+
+.viewer{position:fixed;inset:0;background:#000;z-index:100;display:flex;align-items:center;justify-content:center;animation:fade .15s}
+.viewer img{max-width:100%;max-height:100%;object-fit:contain}
+.viewer button{position:absolute;top:calc(var(--sat) + 14px);right:16px;border:0;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;justify-content:center}
+.viewer button svg{width:20px;height:20px}
+
+.toast{position:fixed;left:50%;top:calc(var(--sat) + 12px);transform:translate(-50%,-24px);background:rgba(25,28,40,.94);color:#fff;padding:11px 18px;border-radius:30px;font-size:14.5px;font-weight:600;
+  opacity:0;pointer-events:none;transition:.25s;z-index:200;max-width:88%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.set-card{background:var(--card);border-radius:20px;padding:16px;margin-bottom:14px}
+.set-card h3{margin:0 0 3px;font-size:17px}
+.set-card p{margin:0 0 10px;color:var(--muted);font-size:13.5px}
+.prof{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.prof img{width:68px;height:68px;border-radius:18px;object-fit:cover}
+.mut{color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <img id="logo" class="logo" alt="">
+    <div class="hd"><div id="appname" class="name">Daftar</div><div id="sub" class="sub"></div></div>
+  </header>
+  <main id="main"></main>
+  <button id="fab" class="fab" data-act="fab" aria-label="Qo'shish"></button>
+  <nav class="tabs" id="tabs"></nav>
+  <div id="toast" class="toast"></div>
+</div>
+
+<script>
+'use strict';
+/* ======================================================================
+   Daftar — qarz, buyum va rasmli yozuvlar daftari.
+   Hamma ma'lumot shu telefonning ichida (IndexedDB) saqlanadi.
+   ====================================================================== */
+const DEFAULT_PW = '1234';
+const MAX_PHOTO = 5 * 1024 * 1024;   // bitta rasm 5 MB dan oshmaydi
+const MAX_PHOTOS = 12;               // bitta yozuvga eng ko'pi bilan
+const CUR = { UZS: "so'm", USD: '$' };
+const TITLES = { debt: 'Qarzlar', stuff: 'Buyumlar', note: 'Zametkalar', set: 'Sozlamalar' };
+
+/* ---------- ikonkalar ---------- */
+const I = {
+  debt: '<path d="M3 8a3 3 0 0 1 3-3h11v3"/><path d="M3 8v9a3 3 0 0 0 3 3h13a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1H6a3 3 0 0 1-3-1z"/><circle cx="16.5" cy="13.5" r="1.3"/>',
+  stuff: '<path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/>',
+  note: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h6"/>',
+  set: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  x: '<path d="M6 6l12 12M18 6L6 18"/>',
+  search: '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
+  cam: '<path d="M4 8h3l1.8-2h6.4L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/>',
+  img: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-9 8"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>',
+  edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'
+};
+const ico = (n, c = '') => `<svg class="${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
+
+/* ---------- yordamchilar ---------- */
+const $ = (s, e = document) => e.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const p2 = (n) => String(n).padStart(2, '0');
+const fmt = (n) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+const fmtQty = (n) => String(Math.round(n * 1000) / 1000).replace('.', ',');
+const parseNum = (s) => parseFloat(String(s ?? '').replace(/\s/g, '').replace(',', '.')) || 0;
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`; };
+const fmtD = (s) => (s ? s.split('-').reverse().join('.') : '');
+const fmtDT = (iso) => { if (!iso) return ''; const d = new Date(iso); return `${p2(d.getDate())}.${p2(d.getMonth() + 1)}.${d.getFullYear()} ${p2(d.getHours())}:${p2(d.getMinutes())}`; };
+const money = (n, c) => `${fmt(n)} ${CUR[c || 'UZS']}`;
+const sumCur = (list, fn) => { const o = {}; for (const x of list) { const v = fn(x); if (v) { const c = x.cur || 'UZS'; o[c] = (o[c] || 0) + v; } } return o; };
+const curText = (o) => { const k = Object.keys(o); return k.length ? k.map((c) => `${fmt(o[c])} ${CUR[c]}`).join(' + ') : '0'; };
+const paidOf = (x) => (x.payments || []).reduce((a, p) => a + p.amount, 0);
+const balOf = (x) => (x.amount || 0) - paidOf(x);
+const byId = (id) => S.items.find((x) => x.id === Number(id));
+
+/* ---------- holat ---------- */
+const S = { tab: 'debt', q: '', filter: 'all', items: [], set: {} };
+let DB, F = {};
+
+/* ---------- xotira (IndexedDB) ---------- */
+function openDB() {
+  return new Promise((ok, no) => {
+    const r = indexedDB.open('daftar', 1);
+    r.onupgradeneeded = () => {
+      const d = r.result;
+      d.createObjectStore('items', { keyPath: 'id', autoIncrement: true });
+      d.createObjectStore('settings', { keyPath: 'key' });
+    };
+    r.onsuccess = () => ok(r.result);
+    r.onerror = () => no(r.error);
+    r.onblocked = () => no(new Error('blocked'));
+  });
+}
+function dbRead(name) {
+  return new Promise((ok, no) => { const r = DB.transaction(name).objectStore(name).getAll(); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); });
+}
+function dbWrite(name, fn) {
+  return new Promise((ok, no) => {
+    const t = DB.transaction(name, 'readwrite'); let res;
+    const r = fn(t.objectStore(name));
+    r.onsuccess = () => { res = r.result; };
+    t.oncomplete = () => ok(res); t.onerror = () => no(t.error); t.onabort = () => no(t.error);
+  });
+}
+const dbPut = (n, v) => dbWrite(n, (s) => s.put(v));
+const dbDel = (n, k) => dbWrite(n, (s) => s.delete(k));
+const dbClear = (n) => dbWrite(n, (s) => s.clear());
+async function setSet(key, value) { S.set[key] = value; await dbPut('settings', { key, value }); }
+async function reload() { S.items = await dbRead('items'); }
+
+/* ---------- parol (SHA-256, tuz bilan) ---------- */
+const sha256 = (() => {
+  const primes = [];
+  for (let n = 2; primes.length < 64; n++) { let ok = true; for (const q of primes) { if (q * q > n) break; if (n % q === 0) { ok = false; break; } } if (ok) primes.push(n); }
+  const fr = (x) => x - Math.floor(x);
+  const K = primes.map((p) => Math.floor(fr(Math.cbrt(p)) * 4294967296) >>> 0);
+  const H0 = primes.slice(0, 8).map((p) => Math.floor(fr(Math.sqrt(p)) * 4294967296) >>> 0);
+  const rr = (x, n) => (x >>> n) | (x << (32 - n));
+  return (str) => {
+    const bytes = new TextEncoder().encode(str), l = bytes.length;
+    const total = ((l + 9 + 63) >>> 6) << 6;
+    const buf = new Uint8Array(total); buf.set(bytes); buf[l] = 0x80;
+    const dv = new DataView(buf.buffer);
+    dv.setUint32(total - 8, Math.floor((l * 8) / 4294967296)); dv.setUint32(total - 4, (l * 8) >>> 0);
+    const h = H0.slice(), w = new Uint32Array(64);
+    for (let o = 0; o < total; o += 64) {
+      for (let i = 0; i < 16; i++) w[i] = dv.getUint32(o + i * 4);
+      for (let i = 16; i < 64; i++) {
+        const a = w[i - 15], b = w[i - 2];
+        w[i] = (w[i - 16] + (rr(a, 7) ^ rr(a, 18) ^ (a >>> 3)) + w[i - 7] + (rr(b, 17) ^ rr(b, 19) ^ (b >>> 10))) >>> 0;
+      }
+      let [a, b, c, d, e, f, g, hh] = h;
+      for (let i = 0; i < 64; i++) {
+        const t1 = (hh + (rr(e, 6) ^ rr(e, 11) ^ rr(e, 25)) + ((e & f) ^ (~e & g)) + K[i] + w[i]) >>> 0;
+        const t2 = ((rr(a, 2) ^ rr(a, 13) ^ rr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) >>> 0;
+        hh = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+      }
+      h[0] = (h[0] + a) >>> 0; h[1] = (h[1] + b) >>> 0; h[2] = (h[2] + c) >>> 0; h[3] = (h[3] + d) >>> 0;
+      h[4] = (h[4] + e) >>> 0; h[5] = (h[5] + f) >>> 0; h[6] = (h[6] + g) >>> 0; h[7] = (h[7] + hh) >>> 0;
+    }
+    return h.map((x) => x.toString(16).padStart(8, '0')).join('');
+  };
+})();
+function hashPw(pw, salt) { let h = sha256(salt + ':' + pw); for (let i = 0; i < 3000; i++) h = sha256(h + salt); return h; }
+function makePw(pw) {
+  const a = new Uint8Array(16); crypto.getRandomValues(a);
+  const salt = [...a].map((x) => x.toString(16).padStart(2, '0')).join('');
+  return salt + '$' + hashPw(pw, salt);
+}
+function checkPw(pw) {
+  const v = S.set.pw; if (!v) return false;
+  const [salt, h] = v.split('$');
+  return hashPw(pw, salt) === h;
+}
+
+/* ---------- kichik oynalar ---------- */
+let toastT;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2400);
+}
+let sheetEl = null;
+function closeSheet() { if (sheetEl) { sheetEl.remove(); sheetEl = null; } }
+function sheet({ title, body, foot = '', dismiss = true }) {
+  closeSheet();
+  const o = document.createElement('div');
+  o.className = 'overlay';
+  o.innerHTML = `<div class="sheet"><div class="sheet-head"><h2>${esc(title)}</h2><button class="x" data-act="close" aria-label="Yopish">${ico('x')}</button></div>
+    <div class="sheet-body">${body}</div>${foot ? `<div class="sheet-foot">${foot}</div>` : ''}</div>`;
+  if (dismiss) o.addEventListener('click', (e) => { if (e.target === o) closeSheet(); });
+  document.body.appendChild(o); sheetEl = o;
+  return o;
+}
+function askPassword(msg, okText = "O'chirish", solid = true) {
+  return new Promise((res) => {
+    const o = document.createElement('div');
+    o.className = 'overlay dlg';
+    o.innerHTML = `<div class="dialog"><h3>Parol kerak</h3><p>${esc(msg)}</p>
+      <input id="pwin" type="password" autocomplete="off" autocapitalize="off" placeholder="Parolni kiriting">
+      <div class="err" id="pwerr"></div>
+      <div class="row"><button class="btn" id="pwno">Bekor qilish</button><button class="btn danger ${solid ? 'solid' : ''}" id="pwok">${esc(okText)}</button></div></div>`;
+    document.body.appendChild(o);
+    const inp = $('#pwin', o); setTimeout(() => inp.focus(), 60);
+    const done = (v) => { o.remove(); res(v); };
+    const go = () => {
+      if (checkPw(inp.value)) done(true);
+      else { $('#pwerr', o).textContent = "Parol noto'g'ri"; inp.value = ''; inp.focus(); }
+    };
+    $('#pwno', o).onclick = () => done(false);
+    $('#pwok', o).onclick = go;
+    inp.onkeydown = (e) => { if (e.key === 'Enter') go(); };
+  });
+}
+function confirmBox(msg, okText = 'Ha') {
+  return new Promise((res) => {
+    const o = document.createElement('div');
+    o.className = 'overlay dlg';
+    o.innerHTML = `<div class="dialog"><h3>Tasdiqlang</h3><p>${esc(msg)}</p>
+      <div class="row"><button class="btn" id="cno">Yo'q</button><button class="btn danger solid" id="cok">${esc(okText)}</button></div></div>`;
+    document.body.appendChild(o);
+    const done = (v) => { o.remove(); res(v); };
+    $('#cno', o).onclick = () => done(false); $('#cok', o).onclick = () => done(true);
+  });
+}
+function viewPhoto(src) {
+  const v = document.createElement('div');
+  v.className = 'viewer';
+  v.innerHTML = `<img src="${src}" alt=""><button aria-label="Yopish">${ico('x')}</button>`;
+  v.addEventListener('click', () => v.remove());
+  document.body.appendChild(v);
+}
+
+/* ---------- rasm: avtomatik siqish (5 MB dan oshmaydi) ---------- */
+const dataBytes = (d) => Math.floor((d.length - d.indexOf(',') - 1) * 0.75);
+function toJpeg(img, max, q) {
+  const r = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+  const w = Math.max(1, Math.round(img.naturalWidth * r)), h = Math.max(1, Math.round(img.naturalHeight * r));
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, w, h); x.drawImage(img, 0, 0, w, h);
+  return c.toDataURL('image/jpeg', q);
+}
+async function loadImg(file) {
+  const url = URL.createObjectURL(file);
+  try { const img = new Image(); img.src = url; await img.decode(); return { img, url }; }
+  catch (e) { URL.revokeObjectURL(url); throw e; }
+}
+async function packImage(file) {
+  const { img, url } = await loadImg(file);
+  try {
+    let side = 1600, q = 0.82, f = toJpeg(img, side, q);
+    while (dataBytes(f) > MAX_PHOTO && (q > 0.45 || side > 500)) {
+      if (q > 0.45) q -= 0.1; else side = Math.round(side * 0.8);
+      f = toJpeg(img, side, q);
+    }
+    if (dataBytes(f) > MAX_PHOTO) throw new Error('Rasm juda katta');
+    return { f, t: toJpeg(img, 360, 0.72) };
+  } finally { URL.revokeObjectURL(url); }
+}
+async function squareLogo(file) {
+  const { img, url } = await loadImg(file);
+  try {
+    const n = 256, c = document.createElement('canvas'); c.width = c.height = n;
+    const x = c.getContext('2d'), s = Math.min(img.naturalWidth, img.naturalHeight);
+    x.drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, 0, 0, n, n);
+    return c.toDataURL('image/png');
+  } finally { URL.revokeObjectURL(url); }
+}
+async function addFiles(files) {
+  const list = [...files];
+  for (const f of list) {
+    if (F.photos.length >= MAX_PHOTOS) { toast(`Eng ko'pi bilan ${MAX_PHOTOS} ta rasm`); break; }
+    try { toast('Rasm siqilmoqda...'); F.photos.push(await packImage(f)); drawThumbs(); }
+    catch (e) { toast("Rasmni o'qib bo'lmadi"); }
+  }
+  if (list.length) toast(`Rasm qo'shildi (${F.photos.length} ta)`);
+}
+function drawThumbs() {
+  const el = $('#f-photos'); if (!el) return;
+  el.innerHTML = F.photos.map((p, i) => `<div class="thumb"><img src="${p.t}" data-act="viewf" data-i="${i}" alt="">
+    <button type="button" data-act="rmphoto" data-i="${i}" aria-label="Rasmni olib tashlash">${ico('x')}</button></div>`).join('');
+}
+
+/* ---------- ko'rinishlar ---------- */
+function applyBrand() {
+  const name = S.set.appName || 'Daftar';
+  $('#appname').textContent = name;
+  $('#logo').src = S.set.logo || 'icon-192.png';
+  document.title = name;
+  const m = document.querySelector('meta[name="apple-mobile-web-app-title"]'); if (m) m.content = name;
+}
+const isStandalone = () => navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
+function tipCard() {
+  if (S.set.tipHidden || isStandalone() || !isIOS()) return '';
+  return `<div class="tip"><button data-act="hidetip" aria-label="Yopish">×</button><b>Ilovani bosh ekranga qo'shing</b>
+    Safari'da pastdagi «Ulashish» tugmasini bosing → «Bosh ekranga qo'shish». Keyin faqat shu ikonka orqali oching: ma'lumotlar o'sha yerda saqlanadi.</div>`;
+}
+const searchBox = (ph) => `<div class="search">${ico('search')}<input id="q" type="search" placeholder="${esc(ph)}" value="${esc(S.q)}" autocomplete="off"></div>`;
+const chip = (v, l) => `<button class="chip ${S.filter === v ? 'on' : ''}" data-act="filter" data-v="${v}">${l}</button>`;
+
+function vDebts() {
+  const open = S.items.filter((x) => x.type === 'debt' && balOf(x) > 0);
+  const toMe = sumCur(open.filter((x) => x.dir === 'toMe'), balOf);
+  const iOwe = sumCur(open.filter((x) => x.dir === 'iOwe'), balOf);
+  return `${tipCard()}<div class="sum2">
+    <div class="sumc good"><span>Menga qarz</span><b>${curText(toMe)}</b></div>
+    <div class="sumc bad"><span>Men qarzman</span><b>${curText(iOwe)}</b></div></div>
+    ${searchBox('Ism, telefon yoki izoh bo\'yicha qidirish')}
+    <div class="chips">${chip('all', 'Hammasi')}${chip('toMe', 'Menga qarz')}${chip('iOwe', 'Men qarzman')}${chip('closed', 'Yopilgan')}</div>
+    <div id="list"></div>`;
+}
+function vStuff() {
+  const all = S.items.filter((x) => x.type === 'stuff');
+  const qty = all.reduce((a, x) => a + (x.qty || 0), 0);
+  const val = sumCur(all, (x) => (x.qty || 0) * (x.price || 0));
+  return `${tipCard()}<div class="sum3">
+    <div class="sumc brand"><span>Turlari</span><b>${all.length}</b></div>
+    <div class="sumc brand"><span>Jami soni</span><b>${fmtQty(qty)}</b></div>
+    <div class="sumc brand"><span>Qiymati</span><b>${curText(val)}</b></div></div>
+    ${searchBox('Buyum nomi yoki joyi bo\'yicha qidirish')}<div id="list"></div>`;
+}
+function vNotes() { return `${tipCard()}${searchBox('Zametkalardan qidirish')}<div id="list"></div>`; }
+
+function vSettings() {
+  const name = S.set.appName || 'Daftar';
+  const last = S.set.lastBackup ? fmtDT(S.set.lastBackup) : 'hali olinmagan';
+  return `${tipCard()}
+  <div class="set-card"><h3>Ilova nomi va logosi</h3><p>Yuqoridagi sarlavhada ko'rinadi.</p>
+    <div class="prof"><img src="${esc(S.set.logo || 'icon-192.png')}" alt=""><div class="grow">
+      <div class="btnrow"><button class="btn small" data-act="pickLogo">Logoni almashtirish</button>${S.set.logo ? '<button class="btn small danger" data-act="resetLogo">Standart</button>' : ''}</div></div></div>
+    <div class="field"><label>Ilova nomi</label><input id="s-name" value="${esc(name)}" maxlength="24" autocomplete="off"></div>
+    <button class="btn primary" data-act="saveName" style="width:100%">Nomni saqlash</button>
+    <input type="file" id="in-logo" accept="image/*" hidden></div>
+
+  <div class="set-card"><h3>Parolni almashtirish</h3><p>Parol ma'lumot o'chirishda so'raladi. Boshlang'ich parol: 1234</p>
+    <div class="field"><label>Eski parol</label><input id="pw-old" type="password" autocomplete="off"></div>
+    <div class="field"><label>Yangi parol <i>(kamida 4 ta belgi)</i></label><input id="pw-new" type="password" autocomplete="off"></div>
+    <div class="field"><label>Yangi parolni takrorlang</label><input id="pw-rep" type="password" autocomplete="off"></div>
+    <button class="btn primary" data-act="changePw" style="width:100%">Parolni almashtirish</button></div>
+
+  <div class="set-card"><h3>Zaxira nusxa</h3>
+    <p>Ma'lumotlar faqat shu telefonda turadi. Ikonkani o'chirsangiz yoki telefon almashtirsangiz yo'qolishi mumkin — shuning uchun vaqti-vaqti bilan zaxira oling.<br>Oxirgi zaxira: <b>${esc(last)}</b></p>
+    <div class="btnrow"><button class="btn" data-act="export">Zaxira olish</button><button class="btn" data-act="import">Tiklash</button></div>
+    <input type="file" id="in-import" accept="application/json,.json" hidden></div>
+
+  <div class="set-card"><h3>Xotira</h3><p id="st-use">Hisoblanmoqda...</p>
+    <button class="btn danger" data-act="wipe" style="width:100%">Hamma ma'lumotni o'chirish</button></div>
+  <div class="mut" style="text-align:center;margin:6px 0 14px">Daftar 1.0 · ma'lumotlar internetga yuborilmaydi</div>`;
+}
+
+function emptyState(tab) {
+  const m = { debt: ['Qarzlar yo\'q', 'Pastdagi + tugmasi bilan birinchi qarzni yozing'],
+              stuff: ['Buyumlar yo\'q', 'Pastdagi + tugmasi bilan buyum qo\'shing, rasmini oling'],
+              note: ['Zametkalar yo\'q', 'Pastdagi + tugmasi bilan yozing yoki rasmga oling'] }[tab];
+  return `<div class="empty">${ico(tab)}<b>${m[0]}</b>${m[1]}</div>`;
+}
+const hay = (x) => [x.person, x.phone, String(x.phone || '').replace(/\D/g, ''), x.title, x.note, x.text, x.place, fmtD(x.date), fmtD(x.due), fmtDT(x.createdAt), x.amount, x.price].join(' ').toLowerCase();
+
+function cDebt(x) {
+  const b = balOf(x), closed = b <= 0, over = !closed && x.due && x.due < today();
+  const av = x.photos?.[0] ? `<img class="th" src="${x.photos[0].t}" alt="">` : `<div class="av ${x.dir}">${esc(((x.person || '?').trim()[0] || '?').toUpperCase())}</div>`;
+  return `<div class="card row-card" data-act="open" data-id="${x.id}">${av}
+    <div class="grow"><div class="t">${esc(x.person)}</div>
+    <div class="s">${x.dir === 'toMe' ? 'Menga qarz' : 'Men qarzman'} · ${fmtD(x.date)}</div>
+    ${x.due && !closed ? `<div class="s ${over ? 'late' : ''}">${over ? "Muddati o'tgan: " : 'Muddat: '}${fmtD(x.due)}</div>` : ''}</div>
+    <div class="amt ${closed ? 'done' : x.dir === 'toMe' ? 'good' : 'bad'}">${closed ? 'Yopilgan' : money(b, x.cur)}</div></div>`;
+}
+function cStuff(x) {
+  const img = x.photos?.[0] ? `<img class="gimg" src="${x.photos[0].t}" alt="">` : `<div class="gimg">${ico('stuff')}</div>`;
+  return `<div class="gcard" data-act="open" data-id="${x.id}">${img}<div class="gbody"><div class="t">${esc(x.title)}</div>
+    <div class="s"><span class="qty">${fmtQty(x.qty || 0)} ${esc(x.unit || '')}</span>${x.price ? ' · ' + money(x.price, x.cur) : ''}</div></div></div>`;
+}
+function cNote(x) {
+  const pics = (x.photos || []).slice(0, 4).map((p) => `<img src="${p.t}" alt="">`).join('');
+  return `<div class="card note-card" data-act="open" data-id="${x.id}" style="cursor:pointer"><div class="t">${esc(x.title || 'Nomsiz')}</div>
+    ${x.text ? `<div class="tx">${esc(x.text)}</div>` : ''}${pics ? `<div class="pics">${pics}</div>` : ''}
+    <div class="s" style="margin-top:8px">${fmtDT(x.updatedAt || x.createdAt)}</div></div>`;
+}
+function fillList() {
+  const el = $('#list'); if (!el) return;
+  const q = S.q.trim().toLowerCase();
+  let arr = S.items.filter((x) => x.type === S.tab);
+  if (S.tab === 'debt') {
+    if (S.filter === 'toMe') arr = arr.filter((x) => x.dir === 'toMe' && balOf(x) > 0);
+    else if (S.filter === 'iOwe') arr = arr.filter((x) => x.dir === 'iOwe' && balOf(x) > 0);
+    else if (S.filter === 'closed') arr = arr.filter((x) => balOf(x) <= 0);
+  }
+  if (q) arr = arr.filter((x) => hay(x).includes(q));
+  if (S.tab === 'debt') arr.sort((a, b) => ((balOf(a) <= 0) - (balOf(b) <= 0)) || (b.createdAt > a.createdAt ? 1 : -1));
+  else if (S.tab === 'stuff') arr.sort((a, b) => a.title.localeCompare(b.title, 'uz'));
+  else arr.sort((a, b) => ((b.updatedAt || b.createdAt) > (a.updatedAt || a.createdAt) ? 1 : -1));
+  if (!arr.length) { el.innerHTML = q ? `<div class="empty"><b>Hech narsa topilmadi</b>Boshqacha yozib ko'ring</div>` : emptyState(S.tab); return; }
+  el.innerHTML = S.tab === 'debt' ? arr.map(cDebt).join('') : S.tab === 'stuff' ? `<div class="grid">${arr.map(cStuff).join('')}</div>` : arr.map(cNote).join('');
+}
+
+function render() {
+  $('#tabs').innerHTML = ['debt', 'stuff', 'note', 'set'].map((t) =>
+    `<button data-act="tab" data-t="${t}" class="${S.tab === t ? 'on' : ''}">${ico(t)}<span>${TITLES[t]}</span></button>`).join('');
+  $('#fab').innerHTML = ico('plus'); $('#fab').style.display = S.tab === 'set' ? 'none' : 'flex';
+  $('#sub').textContent = TITLES[S.tab];
+  $('#main').innerHTML = ({ debt: vDebts, stuff: vStuff, note: vNotes, set: vSettings })[S.tab]();
+  fillList();
+  if (S.tab === 'set' && navigator.storage?.estimate) {
+    navigator.storage.estimate().then((e) => {
+      const el = $('#st-use'); if (!el) return;
+      const mb = (e.usage / 1048576).toFixed(1);
+      el.textContent = `Yozuvlar: ${S.items.length} ta · Band joy: ${mb} MB`;
+    }).catch(() => {});
+  } else if (S.tab === 'set') { const el = $('#st-use'); if (el) el.textContent = `Yozuvlar: ${S.items.length} ta`; }
+}
+
+/* ---------- shakllar ---------- */
+const fld = (label, inner, hint = '') => `<div class="field"><label>${label}${hint ? ` <i>${hint}</i>` : ''}</label>${inner}</div>`;
+const seg = (k, opts, val) => `<div class="seg">${opts.map(([v, l]) => `<button type="button" data-act="seg" data-k="${k}" data-v="${v}" class="${v === val ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+const photoField = () => `<div class="field"><label>Rasmlar <i>(har biri 5 MB dan oshmaydi, o'zi siqiladi)</i></label>
+  <div class="thumbs" id="f-photos"></div>
+  <div class="btnrow"><button type="button" class="btn small" data-act="cam" style="flex:1">${ico('cam')}<span style="vertical-align:6px"> Kamera</span></button>
+  <button type="button" class="btn small" data-act="gal" style="flex:1">${ico('img')}<span style="vertical-align:6px"> Galereya</span></button></div>
+  <input type="file" id="in-cam" accept="image/*" capture="environment" hidden>
+  <input type="file" id="in-gal" accept="image/*" multiple hidden></div>`;
+const moneyIn = (id, v) => `<input id="${id}" class="money" inputmode="numeric" placeholder="0" autocomplete="off" value="${v ? fmt(v) : ''}">`;
+const UNITS = ['dona', 'kg', 'litr', 'metr', 'quti', 'juft', 'pachka'];
+
+function openForm(type, id) {
+  const it = id ? byId(id) : {};
+  F = { type, id: it.id, photos: (it.photos || []).slice(), dir: it.dir || 'toMe', cur: it.cur || 'UZS' };
+  let body = '', title = '';
+  if (type === 'debt') {
+    title = id ? 'Qarzni tahrirlash' : 'Yangi qarz';
+    body = `<div class="field">${seg('dir', [['toMe', 'U menga qarz'], ['iOwe', 'Men unga qarz']], F.dir)}</div>
+      ${fld('Ism familiya', `<input id="f-person" autocapitalize="words" autocomplete="off" value="${esc(it.person)}" placeholder="Masalan: Aliyev Vali">`)}
+      ${fld('Telefon', `<input id="f-phone" type="tel" autocomplete="off" value="${esc(it.phone)}" placeholder="+998 90 123 45 67">`)}
+      <div class="field"><label>Valyuta</label>${seg('cur', [['UZS', "So'm"], ['USD', 'Dollar $']], F.cur)}</div>
+      ${fld('Qarz summasi', moneyIn('f-amount', it.amount))}
+      <div class="two">${fld('Qarz sanasi', `<input id="f-date" type="date" value="${it.date || today()}">`)}${fld('Qaytarish muddati', `<input id="f-due" type="date" value="${it.due || ''}">`)}</div>
+      ${fld('Izoh', `<textarea id="f-note" rows="3" placeholder="Nima uchun, qanday kelishuv...">${esc(it.note)}</textarea>`)}
+      ${photoField()}`;
+  } else if (type === 'stuff') {
+    title = id ? 'Buyumni tahrirlash' : 'Yangi buyum';
+    body = `${fld('Nomi', `<input id="f-title" autocapitalize="sentences" autocomplete="off" value="${esc(it.title)}" placeholder="Masalan: Drel, Un, Kabel">`)}
+      <div class="two">${fld('Soni', `<input id="f-qty" inputmode="decimal" autocomplete="off" value="${it.qty != null ? fmtQty(it.qty) : '1'}">`)}
+      ${fld('Birligi', `<select id="f-unit">${UNITS.map((u) => `<option ${((it.unit || 'dona') === u) ? 'selected' : ''}>${u}</option>`).join('')}</select>`)}</div>
+      <div class="field"><label>Valyuta</label>${seg('cur', [['UZS', "So'm"], ['USD', 'Dollar $']], F.cur)}</div>
+      ${fld('Narxi (bittasi)', moneyIn('f-price', it.price), 'ixtiyoriy')}
+      ${fld('Qayerda turibdi', `<input id="f-place" autocapitalize="sentences" autocomplete="off" value="${esc(it.place)}" placeholder="Masalan: Ombor, 2-javon">`, 'ixtiyoriy')}
+      ${fld('Izoh', `<textarea id="f-note" rows="3">${esc(it.note)}</textarea>`, 'ixtiyoriy')}
+      ${photoField()}`;
+  } else {
+    title = id ? 'Zametkani tahrirlash' : 'Yangi zametka';
+    body = `${fld('Sarlavha', `<input id="f-title" autocapitalize="sentences" autocomplete="off" value="${esc(it.title)}" placeholder="Nima haqida?">`)}
+      ${fld('Matn', `<textarea id="f-text" rows="9" placeholder="Yozing...">${esc(it.text)}</textarea>`)}
+      ${photoField()}`;
+  }
+  const o = sheet({ title, body, dismiss: false,
+    foot: `<button class="btn" data-act="cancelForm">Bekor qilish</button><button class="btn primary" data-act="saveForm">Saqlash</button>` });
+  drawThumbs();
+  $('#in-cam', o).onchange = (e) => { addFiles(e.target.files); e.target.value = ''; };
+  $('#in-gal', o).onchange = (e) => { addFiles(e.target.files); e.target.value = ''; };
+  setTimeout(() => { const f = $('#f-person') || $('#f-title'); if (f && !id) f.focus(); }, 300);
+}
+
+async function saveForm() {
+  const v = (id) => ($('#' + id)?.value || '').trim();
+  const old = F.id ? byId(F.id) : null;
+  const now = new Date().toISOString();
+  let rec = { ...(old || {}), type: F.type, photos: F.photos, updatedAt: now };
+  if (!old) rec.createdAt = now;
+  if (F.type === 'debt') {
+    const amount = parseNum(v('f-amount'));
+    if (!v('f-person')) return toast('Ismni kiriting');
+    if (amount <= 0) return toast('Summani kiriting');
+    const pd = paidOf(old || {});
+    if (old && amount < pd) return toast(`Summa to'langandan (${fmt(pd)}) kam bo'lmasin`);
+    Object.assign(rec, { dir: F.dir, cur: F.cur, person: v('f-person'), phone: v('f-phone'), amount, date: v('f-date') || today(), due: v('f-due'), note: v('f-note') });
+    rec.payments = old?.payments || [];
+  } else if (F.type === 'stuff') {
+    if (!v('f-title')) return toast('Nomini kiriting');
+    Object.assign(rec, { title: v('f-title'), qty: parseNum(v('f-qty')), unit: v('f-unit') || 'dona', cur: F.cur, price: parseNum(v('f-price')), place: v('f-place'), note: v('f-note') });
+  } else {
+    if (!v('f-title') && !v('f-text') && !F.photos.length) return toast('Biror narsa yozing yoki rasm qo\'shing');
+    Object.assign(rec, { title: v('f-title') || (v('f-text').split('\n')[0] || '').slice(0, 40), text: v('f-text') });
+  }
+  try { const id = await dbPut('items', rec); rec.id = old ? old.id : id; await reload(); }
+  catch (e) { return toast("Saqlab bo'lmadi: joy yetmayapti"); }
+  closeSheet(); render(); toast('Saqlandi');
+  return rec.id;
+}
+
+/* ---------- batafsil oynalar ---------- */
+const photosBlock = (x) => (x.photos?.length ? `<h4>Rasmlar</h4><div class="pgrid">${x.photos.map((p, i) => `<img src="${p.t}" data-act="view" data-id="${x.id}" data-i="${i}" alt="">`).join('')}</div>` : '');
+const infoRow = (k, v) => (v ? `<div><span>${k}</span><b>${v}</b></div>` : '');
+const footEdit = (extra = '') => `${extra}<button class="btn icon" data-act="edit" aria-label="Tahrirlash">${ico('edit')}</button><button class="btn danger icon" data-act="del" aria-label="O'chirish">${ico('trash')}</button>`;
+
+function openDetail(id) {
+  const x = byId(id); if (!x) return closeSheet();
+  F.cur_id = x.id;
+  if (x.type === 'debt') {
+    const p = paidOf(x), b = balOf(x), closed = b <= 0, pct = x.amount ? Math.min(100, Math.round((p / x.amount) * 100)) : 0;
+    const pays = (x.payments || []).slice().sort((a, c) => (a.at < c.at ? 1 : -1));
+    const body = `<div class="bigcard ${closed ? 'closed' : x.dir}"><small>${x.dir === 'toMe' ? 'U menga qarz' : 'Men unga qarz'}${closed ? ' · yopilgan' : ''}</small>
+      <div class="num">${closed ? "To'liq to'langan" : money(b, x.cur)}</div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="meta"><span>To'langan: ${money(p, x.cur)}</span><span>Jami: ${money(x.amount, x.cur)}</span></div></div>
+      <div class="info">${infoRow('Telefon', x.phone ? `<a href="tel:${esc(x.phone.replace(/[^\d+]/g, ''))}">${esc(x.phone)}</a>` : '')}
+      ${infoRow('Qarz sanasi', fmtD(x.date))}${infoRow('Muddat', x.due ? fmtD(x.due) : '')}${infoRow('Izoh', esc(x.note))}</div>
+      ${photosBlock(x)}
+      <h4>To'lovlar tarixi</h4>${pays.length ? pays.map((q) => `<div class="pay"><div class="d"><b>${fmtDT(q.at)}</b><span>${esc(q.note || (x.dir === 'toMe' ? 'Qaytarildi' : "To'landi"))}</span></div>
+        <div class="a">+${money(q.amount, x.cur)}</div><button data-act="delpay" data-pid="${q.id}" aria-label="O'chirish">${ico('trash')}</button></div>`).join('') : '<div class="mut" style="padding:4px 4px 10px">Hali to\'lov bo\'lmagan</div>'}`;
+    sheet({ title: x.person, body, foot: footEdit(closed ? '' : `<button class="btn primary" data-act="pay">To'lov qo'shish</button>`) });
+  } else if (x.type === 'stuff') {
+    const body = `<div class="stepper"><button data-act="qty" data-d="-1" aria-label="Kamaytirish">−</button>
+      <div class="q"><b>${fmtQty(x.qty || 0)}</b><span>${esc(x.unit || '')}</span></div><button data-act="qty" data-d="1" aria-label="Ko'paytirish">+</button></div>
+      <div class="info">${infoRow('Narxi (bittasi)', x.price ? money(x.price, x.cur) : '')}${infoRow('Jami qiymati', x.price ? money((x.qty || 0) * x.price, x.cur) : '')}
+      ${infoRow('Joyi', esc(x.place))}${infoRow('Izoh', esc(x.note))}${infoRow("Qo'shilgan", fmtDT(x.createdAt))}</div>${photosBlock(x)}`;
+    sheet({ title: x.title, body, foot: footEdit() });
+  } else {
+    const body = `${x.text ? `<div class="notetext">${esc(x.text)}</div>` : ''}${photosBlock(x)}
+      <div class="mut" style="margin:14px 4px 0">Yozilgan: ${fmtDT(x.createdAt)}${x.updatedAt && x.updatedAt !== x.createdAt ? ` · o'zgargan: ${fmtDT(x.updatedAt)}` : ''}</div>`;
+    sheet({ title: x.title || 'Zametka', body, foot: footEdit() });
+  }
+}
+
+function openPay(id) {
+  const x = byId(id); if (!x) return;
+  const b = balOf(x);
+  const o = sheet({ title: "To'lov qo'shish", dismiss: false,
+    body: `<div class="bigcard ${x.dir}"><small>${esc(x.person)}</small><div class="num">${money(b, x.cur)}</div><small>Hozirgi qoldiq</small></div>
+      ${fld(x.dir === 'toMe' ? 'Hozir qaytargan summa' : "Hozir to'lagan summa", moneyIn('p-amt', 0))}
+      <div style="margin:-4px 0 6px"><button class="btn small" data-act="payall">Hammasini yopish</button></div>
+      <div id="p-after" class="mut" style="font-size:15px;font-weight:600"></div>
+      ${fld('Izoh', `<input id="p-note" autocomplete="off" placeholder="Masalan: naqd, karta">`, 'ixtiyoriy')}
+      <div class="mut">Sana va vaqt avtomatik yoziladi.</div>`,
+    foot: `<button class="btn" data-act="payback">Bekor qilish</button><button class="btn primary" data-act="paysave">Saqlash</button>` });
+  $('#p-amt', o).addEventListener('input', () => {
+    const n = b - parseNum($('#p-amt', o).value);
+    $('#p-after', o).innerHTML = n < 0 ? '<span style="color:var(--bad)">Summa qoldiqdan katta</span>' : `Keyingi qoldiq: <span style="color:${n > 0 ? 'var(--bad)' : 'var(--good)'}">${money(n, x.cur)}</span>`;
+  });
+  setTimeout(() => $('#p-amt', o).focus(), 300);
+}
+async function savePay() {
+  const x = byId(F.cur_id); if (!x) return;
+  const amt = parseNum($('#p-amt').value), b = balOf(x);
+  if (amt <= 0) return toast('Summani kiriting');
+  if (amt > b) return toast('Summa qoldiqdan katta bo\'lmasin');
+  x.payments = x.payments || []; x.payments.push({ id: Date.now(), amount: amt, at: new Date().toISOString(), note: ($('#p-note').value || '').trim() });
+  x.updatedAt = new Date().toISOString();
+  await dbPut('items', x); await reload(); render(); openDetail(x.id);
+  toast(balOf(x) <= 0 ? 'Qarz to\'liq yopildi' : 'To\'lov saqlandi');
+}
+
+/* ---------- sozlamalar amallari ---------- */
+async function doExport() {
+  const data = { app: 'daftar', v: 1, exported: new Date().toISOString(),
+    settings: { appName: S.set.appName || null, logo: S.set.logo || null, pw: S.set.pw }, items: S.items };
+  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const name = `daftar-zaxira-${today()}.json`;
+  const file = new File([blob], name, { type: 'application/json' });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: name });
+    else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
+  } catch (e) { if (e.name === 'AbortError') return; return toast('Zaxira olinmadi'); }
+  await setSet('lastBackup', new Date().toISOString()); render(); toast('Zaxira tayyor');
+}
+async function doImport(file) {
+  let d;
+  try { d = JSON.parse(await file.text()); if (d.app !== 'daftar' || !Array.isArray(d.items)) throw 0; }
+  catch (e) { return toast("Bu Daftar zaxira fayli emas"); }
+  if (!(await askPassword(`Zaxiradan tiklash hozirgi ma'lumotlarni almashtiradi (${d.items.length} ta yozuv). Parolni kiriting`, 'Tiklash', false))) return;
+  await dbClear('items');
+  for (const it of d.items) await dbPut('items', it);
+  const st = d.settings || {};
+  if (st.appName) await setSet('appName', st.appName);
+  if (st.logo) await setSet('logo', st.logo);
+  if (st.pw) await setSet('pw', st.pw);
+  await reload(); applyBrand(); render(); toast(`Tiklandi: ${d.items.length} ta yozuv`);
+}
+
+/* ---------- bosishlar ---------- */
+const H = {
+  tab(t) { S.tab = t.dataset.t; S.q = ''; S.filter = 'all'; render(); $('#main').scrollTop = 0; },
+  fab() { openForm(S.tab); },
+  filter(t) { S.filter = t.dataset.v; render(); },
+  hidetip() { setSet('tipHidden', true); render(); },
+  open(t) { openDetail(t.dataset.id); },
+  close() { closeSheet(); },
+  seg(t) { F[t.dataset.k] = t.dataset.v; t.parentElement.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b === t)); },
+  cam() { $('#in-cam').click(); }, gal() { $('#in-gal').click(); },
+  rmphoto(t) { F.photos.splice(Number(t.dataset.i), 1); drawThumbs(); },
+  viewf(t) { viewPhoto(F.photos[Number(t.dataset.i)].f); },
+  view(t) { const x = byId(t.dataset.id); if (x) viewPhoto(x.photos[Number(t.dataset.i)].f); },
+  cancelForm() { F.id ? openDetail(F.id) : closeSheet(); },
+  async saveForm() { const wasEdit = !!F.id; const id = await saveForm(); if (id && wasEdit) openDetail(id); },
+  edit() { openForm(byId(F.cur_id).type, F.cur_id); },
+  pay() { openPay(F.cur_id); },
+  payback() { openDetail(F.cur_id); },
+  payall() { const x = byId(F.cur_id); const i = $('#p-amt'); i.value = fmt(balOf(x)); i.dispatchEvent(new Event('input')); },
+  paysave() { savePay(); },
+  async delpay(t) {
+    const x = byId(F.cur_id);
+    if (!(await askPassword("To'lovni o'chirish uchun parolni kiriting"))) return;
+    x.payments = x.payments.filter((q) => String(q.id) !== t.dataset.pid); x.updatedAt = new Date().toISOString();
+    await dbPut('items', x); await reload(); render(); openDetail(x.id); toast("To'lov o'chirildi");
+  },
+  async qty(t) {
+    const x = byId(F.cur_id); x.qty = Math.max(0, Math.round(((x.qty || 0) + Number(t.dataset.d)) * 1000) / 1000); x.updatedAt = new Date().toISOString();
+    await dbPut('items', x); await reload(); render(); openDetail(x.id);
+  },
+  async del() {
+    const x = byId(F.cur_id);
+    const nm = x.person || x.title || 'Zametka';
+    if (!(await askPassword(`«${nm}» ni o'chirish uchun parolni kiriting`))) return;
+    await dbDel('items', x.id); await reload(); closeSheet(); render(); toast("O'chirildi");
+  },
+  pickLogo() { $('#in-logo').click(); },
+  async resetLogo() { await setSet('logo', null); applyBrand(); render(); toast('Standart logo'); },
+  async saveName() { const n = $('#s-name').value.trim(); if (!n) return toast('Nomni kiriting'); await setSet('appName', n); applyBrand(); toast('Nom saqlandi'); },
+  async changePw() {
+    const o = $('#pw-old').value, n = $('#pw-new').value, r = $('#pw-rep').value;
+    if (!checkPw(o)) return toast("Eski parol noto'g'ri");
+    if (n.length < 4) return toast('Yangi parol kamida 4 ta belgi');
+    if (n !== r) return toast('Yangi parollar bir xil emas');
+    await setSet('pw', makePw(n)); ['pw-old', 'pw-new', 'pw-rep'].forEach((i) => { $('#' + i).value = ''; }); toast('Parol almashtirildi');
+  },
+  export() { doExport(); }, import() { $('#in-import').click(); },
+  async wipe() {
+    if (!(await askPassword("Hamma ma'lumotni o'chirish uchun parolni kiriting"))) return;
+    if (!(await confirmBox(`Hamma ${S.items.length} ta yozuv butunlay o'chadi. Davom etasizmi?`, "Ha, o'chir"))) return;
+    await dbClear('items'); await reload(); render(); toast("Hammasi o'chirildi");
+  }
+};
+document.addEventListener('click', (e) => { const t = e.target.closest('[data-act]'); if (t && H[t.dataset.act]) H[t.dataset.act](t, e); });
+document.addEventListener('input', (e) => {
+  const t = e.target;
+  if (t.classList?.contains('money')) { const d = t.value.replace(/\D/g, ''); t.value = d ? fmt(Number(d)) : ''; }
+  if (t.id === 'q') { S.q = t.value; fillList(); }
+});
+document.addEventListener('change', async (e) => {
+  if (e.target.id === 'in-logo' && e.target.files[0]) { try { await setSet('logo', await squareLogo(e.target.files[0])); applyBrand(); render(); toast('Logo almashtirildi'); } catch (x) { toast("Rasmni o'qib bo'lmadi"); } e.target.value = ''; }
+  if (e.target.id === 'in-import' && e.target.files[0]) { const f = e.target.files[0]; e.target.value = ''; doImport(f); }
+});
+window.addEventListener('unhandledrejection', (e) => toast('Xato: ' + (e.reason?.message || e.reason)));
+
+/* ---------- ishga tushirish ---------- */
+(async function init() {
+  try { DB = await openDB(); }
+  catch (e) { document.body.innerHTML = '<p style="padding:30px;font:17px sans-serif">Xotirani ochib bo\'lmadi. Safari\'da «Maxfiy rejim» o\'chiq ekaniga ishonch hosil qiling.</p>'; return; }
+  await reload();
+  (await dbRead('settings')).forEach((r) => { S.set[r.key] = r.value; });
+  if (!S.set.pw) await setSet('pw', makePw(DEFAULT_PW));
+  applyBrand(); render();
+  try { navigator.storage?.persist?.(); } catch (e) {}
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+</script>
+</body>
+</html>
